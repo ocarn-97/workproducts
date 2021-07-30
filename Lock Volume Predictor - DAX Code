@@ -1,0 +1,20 @@
+Predicted Lock Volume = 
+VAR Application_Coeff =
+    CALCULATE ( SUM ( Coefficients[value] ), Coefficients[component] = "Apps" )
+VAR One_Year_Coeff =
+    CALCULATE (
+        SUM ( Coefficients[value] ),
+        Coefficients[component] = "1-year yield"
+    )
+VAR Intercept =
+    CALCULATE ( SUM ( Coefficients[value] ), Coefficients[component] = "intercept" )
+VAR Volume_Formula = Intercept + ( ( Application_Coeff * 'Applications Parameter'[Applications Value] ) + ( One_Year_Coeff * '1-Year Yield Parameter'[1-Year Yield Value] ) )
+RETURN
+    IF (
+        AND (
+            'Applications Parameter'[Applications Value] > 0,
+            1 - '1-Year Yield Parameter'[1-Year Yield Value] > 0
+        ),
+        Volume_Formula,
+        0
+    )
